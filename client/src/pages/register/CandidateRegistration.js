@@ -3,13 +3,17 @@ import { useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
 import { useRegisterMutation } from "../../features/auth/authApi";
+import { useSelector } from "react-redux";
 
 const CandidateRegistration = () => {
+  const { email } = useSelector((state) => state.auth.user);
   const [countries, setCountries] = useState([]);
-  const { handleSubmit, register, control, reset } = useForm();
+  const { handleSubmit, register, control } = useForm({
+    defaultValues: { email },
+  });
   const term = useWatch({ control, name: "term" });
   const navigate = useNavigate();
-  const [registerCandidate, { isLoading }] = useRegisterMutation();
+  const [registerCandidate] = useRegisterMutation();
 
   useEffect(() => {
     fetch("https://restcountries.com/v3.1/all")
@@ -17,14 +21,7 @@ const CandidateRegistration = () => {
       .then((data) => setCountries(data));
   }, []);
 
-  useEffect(() => {
-    if (isLoading) {
-      reset();
-    }
-  }, [isLoading, reset]);
-
   const onSubmit = (data) => {
-    console.log(data);
     registerCandidate({ ...data, role: "candidate" });
   };
 
@@ -59,7 +56,13 @@ const CandidateRegistration = () => {
             <label className="mb-2" htmlFor="email">
               Email
             </label>
-            <input type="email" id="email" {...register("email")} />
+            <input
+              type="email"
+              id="email"
+              disabled
+              className="cursor-not-allowed"
+              {...register("email")}
+            />
           </div>
           <div className="flex flex-col w-full max-w-xs">
             <h1 className="mb-3">Gender</h1>
