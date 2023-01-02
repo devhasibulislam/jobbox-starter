@@ -8,7 +8,7 @@ import loginImage from "../assets/login.svg";
 import { googleLogin, loginUser } from "../features/auth/authSlice";
 
 const Login = () => {
-  const { register, handleSubmit, reset } = useForm();
+  const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isLoading, email, isError, error } = useSelector(
