@@ -37,7 +37,7 @@ export const loginUser = createAsyncThunk(
   async ({ email, password }) => {
     const data = await signInWithEmailAndPassword(auth, email, password);
 
-    return data?.user?.user.email;
+    return data?.user?.email;
   }
 );
 
