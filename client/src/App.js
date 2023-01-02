@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { RouterProvider } from "react-router-dom";
 import auth from "./config/firebase.config";
-import { setUser, toggleLoading } from "./features/auth/authSlice";
+import { getUser, toggleLoading } from "./features/auth/authSlice";
 import routes from "./routes/routes";
 import { Toaster } from "react-hot-toast";
 
@@ -13,7 +13,7 @@ function App() {
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        dispatch(setUser(user.email));
+        dispatch(getUser(user.email));
       } else {
         dispatch(toggleLoading());
       }
