@@ -7,7 +7,7 @@ import { createUser, googleLogin } from "../features/auth/authSlice";
 import { toast } from "react-hot-toast";
 
 const Signup = () => {
-  const { handleSubmit, register, reset, control } = useForm();
+  const { handleSubmit, register, control } = useForm();
   const password = useWatch({ control, name: "password" });
   const confirmPassword = useWatch({ control, name: "confirmPassword" });
   const { isError, error } = useSelector((state) => state.auth);
