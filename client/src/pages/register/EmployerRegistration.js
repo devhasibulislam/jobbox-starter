@@ -1,21 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { FaChevronLeft } from "react-icons/fa";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "../../features/auth/authApi";
 
 const EmployerRegistration = () => {
-  const [countries, setCountries] = useState([]);
-  const { handleSubmit, register, control, reset } = useForm();
+  const { email } = useSelector((state) => state.auth.user);
+  // const [countries, setCountries] = useState([]);
+  const { handleSubmit, register, control, reset } = useForm({
+    defaultValues: { email },
+  });
   const term = useWatch({ control, name: "term" });
   const navigate = useNavigate();
   const [registerCandidate, { isLoading }] = useRegisterMutation();
 
-  useEffect(() => {
-    fetch("https://restcountries.com/v3.1/all")
-      .then((res) => res.json())
-      .then((data) => setCountries(data));
-  }, []);
+  // useEffect(() => {
+  //   fetch("https://restcountries.com/v3.1/all")
+  //     .then((res) => res.json())
+  //     .then((data) => setCountries(data));
+  // }, []);
 
   useEffect(() => {
     if (isLoading) {
@@ -24,8 +28,7 @@ const EmployerRegistration = () => {
   }, [isLoading, reset]);
 
   const onSubmit = (data) => {
-    console.log(data);
-    registerCandidate({ ...data, role: "employee" });
+    registerCandidate({ ...data, role: "employer" });
   };
 
   const businessCategories = [
@@ -44,9 +47,27 @@ const EmployerRegistration = () => {
     "Aerial Photography",
     "Build and Sell Themes Online",
     "Blogging",
+    "Automotive",
+    "Business Support & Supplies",
+    "Computers & Electronics",
+    "Construction & Contractors",
+    "Design Agency",
+    "Education",
+    "Entertainment",
+    "Food & Dining",
+    "Health & Medicine",
+    "Home & Garden",
+    "IT Farm",
+    "Legal & Financial",
+    "Manufacturing, Wholesale, Distribution",
+    "Merchants (Retail)",
+    "Miscellaneous",
+    "Personal Care & Services",
+    "Real Estate",
+    "Travel & Transportation",
   ];
 
-  const numberOfEmployees = [
+  const employeeRange = [
     "1 - 10",
     "10 - 20",
     "20 - 30",
@@ -74,7 +95,7 @@ const EmployerRegistration = () => {
           className="bg-secondary/20 shadow-lg p-10 rounded-2xl flex flex-wrap gap-3 max-w-3xl justify-between"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <h1 className="w-full text-2xl text-primary mb-5">Employee</h1>
+          <h1 className="w-full text-2xl text-primary mb-5">Candidate</h1>
           <div className="flex flex-col w-full max-w-xs">
             <label className="mb-2" htmlFor="firstName">
               First Name
@@ -91,7 +112,7 @@ const EmployerRegistration = () => {
             <label className="mb-2" htmlFor="email">
               Email
             </label>
-            <input type="email" id="email" {...register("email")} />
+            <input type="email" id="email" disabled className="cursor-not-allowed" {...register("email")} />
           </div>
           <div className="flex flex-col w-full max-w-xs">
             <h1 className="mb-3">Gender</h1>
@@ -133,71 +154,45 @@ const EmployerRegistration = () => {
           </div>
           <hr className="w-full mt-2 bg-black" />
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-3" for="country">
-              Country
+            <label className="mb-2" htmlFor="companyName">
+              Company's name
             </label>
-            <select {...register("country")} id="country">
-              {countries
-                .sort((a, b) => a?.name?.common?.localeCompare(b?.name?.common))
-                .map(({ name }) => (
-                  <option value={name.common}>{name.common}</option>
+            <input type="text" {...register("companyName")} id="companyName" />
+          </div>
+          <div className="flex flex-col w-full max-w-xs">
+            <label className="mb-3" for="employeeRange">
+              Number of employee
+            </label>
+            <select {...register("employeeRange")} id="employeeRange">
+              {employeeRange
+                .sort((a, b) => a.localeCompare(b))
+                .map((category) => (
+                  <option value={category}>{category}</option>
+                ))}
+            </select>
+          </div>
+
+          <div className="flex flex-col w-full max-w-xs">
+            <label className="mb-3" for="companyCategory">
+              Company's Category
+            </label>
+            <select {...register("companyCategory")} id="companyCategory">
+              {businessCategories
+                .sort((a, b) => a.localeCompare(b))
+                .map((category) => (
+                  <option value={category}>{category}</option>
                 ))}
             </select>
           </div>
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlFor="address">
-              Street Address
-            </label>
-            <input type="text" {...register("address")} id="address" />
-          </div>
-          <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlFor="city">
-              City
-            </label>
-            <input type="text" {...register("city")} id="city" />
-          </div>
-          <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlFor="postcode">
-              Postal Code
-            </label>
-            <input type="text" {...register("postcode")} id="postcode" />
-          </div>
-
-          <hr className="w-full mt-2 bg-black" />
-          <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-3" for="businessType">
-              Business Type
-            </label>
-            <select {...register("businessType")} id="businessType">
-              {businessCategories.map((name) => (
-                <option value={name}>{name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-3" for="numberEmployee">
-              Number of employees
-            </label>
-            <select {...register("numberEmployee")} id="numberEmployee">
-              {numberOfEmployees.map((name) => (
-                <option value={name}>{name}</option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlFor="companyName">
-              Company's Name
-            </label>
-            <input type="text" id="companyName" {...register("companyName")} />
-          </div>
-          
-          <div className="flex flex-col w-full max-w-xs">
             <label className="mb-2" htmlFor="roleInCompany">
-              Role in company
+              Your role in company
             </label>
-            <input type="text" id="roleInCompany" {...register("roleInCompany")} />
+            <input
+              type="text"
+              {...register("roleInCompany")}
+              id="roleInCompany"
+            />
           </div>
 
           <div className="flex justify-between items-center w-full mt-3">
