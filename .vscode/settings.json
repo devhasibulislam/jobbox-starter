@@ -6,9 +6,11 @@
     "flowbite",
     "Jobbox",
     "Leftbar",
+    "mfoky",
     "middlewares",
     "reduxjs",
     "signin",
+    "todoapp",
     "trnx"
   ],
   "[jsonc]": {
