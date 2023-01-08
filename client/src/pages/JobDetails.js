@@ -7,6 +7,7 @@ import {
   useApplyJobMutation,
   useGetJobQuery,
   useQuestionMutation,
+  useReplyMutation,
 } from "../features/job/jobApi";
 import Loading from "../components/reusable/Loading";
 import { useSelector } from "react-redux";
@@ -16,13 +17,13 @@ import { useForm } from "react-hook-form";
 const JobDetails = () => {
   const [reply, setReply] = useState("");
   const { id } = useParams();
-  const { data, isLoading } = useGetJobQuery(id, { pollingInterval: 10000 });
+  const { data, isLoading } = useGetJobQuery(id, { pollingInterval: 1000 });
   const job = data?.data || {};
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const [apply, { isSuccess: isApplying }] = useApplyJobMutation();
   const [sendQuestion, { isSuccess: isAsking }] = useQuestionMutation();
-  const [replyQuestion, { isSuccess: isReplying }] = useQuestionMutation();
+  const [replyQuestion, { isSuccess: isReplying }] = useReplyMutation();
   const { handleSubmit, register, reset } = useForm();
 
   const {
@@ -83,6 +84,7 @@ const JobDetails = () => {
   function handleReply(id) {
     const data = { reply, userId: id };
     replyQuestion(data);
+    reset();
   }
 
   return (
