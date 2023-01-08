@@ -30,10 +30,38 @@ const authApi = apiSlice.injectEndpoints({
       providesTags: ["Job"],
     }),
 
+    // fetch all applied jobs
+    getAppliedJobs: builder.query({
+      query: (email) => ({
+        url: `applied-jobs/${email}`,
+      }),
+      providesTags: ["Job"],
+    }),
+
     // fetch specific job
     getJob: builder.query({
       query: (id) => ({
         url: `job/${id}`,
+      }),
+      invalidatesTags: ["Job"],
+    }),
+
+    // ask question
+    question: builder.mutation({
+      query: (data) => ({
+        url: "query",
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Job"],
+    }),
+
+    // reply question
+    reply: builder.mutation({
+      query: (data) => ({
+        url: "reply",
+        method: "PATCH",
+        body: data,
       }),
       invalidatesTags: ["Job"],
     }),
@@ -45,4 +73,7 @@ export const {
   useGetJobsQuery,
   useGetJobQuery,
   useApplyJobMutation,
+  useGetAppliedJobsQuery,
+  useQuestionMutation,
+  useReplyMutation,
 } = authApi;
