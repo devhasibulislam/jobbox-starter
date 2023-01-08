@@ -9,7 +9,7 @@ const cors = require("cors");
 app.use(cors());
 app.use(express.json());
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.q66zrl2.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@todoapp.mfoky.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -149,15 +149,20 @@ const run = async () => {
       res.send({ status: true, data: result });
     });
   } finally {
+    // await client.close();
   }
 };
 
 run().catch((err) => console.log(err));
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.status(200).send({
+    acknowledged: true,
+    message: "OK",
+    description: "Jobbox Starter establishment successful.",
+  });
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Jobbox Starter listening on port ${port}`);
 });
