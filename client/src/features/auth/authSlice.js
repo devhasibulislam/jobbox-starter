@@ -19,12 +19,12 @@ export const createUser = createAsyncThunk(
   async ({ email, password }) => {
     const data = await createUserWithEmailAndPassword(auth, email, password);
 
-    return data?.user?.user.email;
+    return data?.user?.email;
   }
 );
 
 export const getUser = createAsyncThunk("auth/getUser", async (email) => {
-  const res = await fetch(`${process.env.REACT_APP_DEV_URL}/user/${email}`);
+  const res = await fetch(`${process.env.REACT_APP_DEV_URL}user/${email}`);
   const data = await res.json();
 
   if (data.status) return data;
@@ -53,7 +53,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     logout: (state) => {
-      state.user.email = "";
+      state.user = { email: "", role: "" };
     },
     setUser: (state, { payload }) => {
       state.user.email = payload;
