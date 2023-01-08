@@ -5,11 +5,11 @@ const authApi = apiSlice.injectEndpoints({
     // post new job
     postJob: builder.mutation({
       query: (data) => ({
-        url: "job",
+        url: "jobs",
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["Job"],
+      invalidatesTags: ["Jobs"],
     }),
 
     // apply new job
@@ -19,7 +19,7 @@ const authApi = apiSlice.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: ["Job"],
+      invalidatesTags: ["Jobs"],
     }),
 
     // fetch all jobs
@@ -27,7 +27,7 @@ const authApi = apiSlice.injectEndpoints({
       query: () => ({
         url: "jobs",
       }),
-      providesTags: ["Job"],
+      providesTags: ["Jobs"],
     }),
 
     // fetch all applied jobs
@@ -35,7 +35,7 @@ const authApi = apiSlice.injectEndpoints({
       query: (email) => ({
         url: `applied-jobs/${email}`,
       }),
-      providesTags: ["Job"],
+      providesTags: ["Jobs"],
     }),
 
     // fetch specific job
@@ -43,7 +43,7 @@ const authApi = apiSlice.injectEndpoints({
       query: (id) => ({
         url: `job/${id}`,
       }),
-      invalidatesTags: ["Job"],
+      providesTags: ["Job"],
     }),
 
     // ask question
