@@ -1,20 +1,29 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import meeting from "../assets/meeting.jpg";
 import { BsArrowRightShort, BsArrowReturnRight } from "react-icons/bs";
 import { useNavigate, useParams } from "react-router-dom";
-import { useApplyJobMutation, useGetJobQuery } from "../features/job/jobApi";
+import {
+  useApplyJobMutation,
+  useGetJobQuery,
+  useQuestionMutation,
+} from "../features/job/jobApi";
 import Loading from "../components/reusable/Loading";
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
+import { useForm } from "react-hook-form";
 
 const JobDetails = () => {
+  const [reply, setReply] = useState("");
   const { id } = useParams();
   const { data, isLoading } = useGetJobQuery(id, { pollingInterval: 10000 });
   const job = data?.data || {};
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  const [apply, { isSuccess }] = useApplyJobMutation();
+  const [apply, { isSuccess: isApplying }] = useApplyJobMutation();
+  const [sendQuestion, { isSuccess: isAsking }] = useQuestionMutation();
+  const [replyQuestion, { isSuccess: isReplying }] = useQuestionMutation();
+  const { handleSubmit, register, reset } = useForm();
 
   const {
     companyName,
@@ -33,10 +42,10 @@ const JobDetails = () => {
   } = job || {};
 
   useEffect(() => {
-    if (isSuccess) {
-      toast.success("Apply submitted!", { id: "applyJob" });
+    if (isApplying || isAsking || isReplying) {
+      toast.success("Success progress.", { id: "applyJob" });
     }
-  }, [isSuccess]);
+  }, [isApplying, isAsking, isReplying]);
 
   if (isLoading) {
     return <Loading />;
@@ -59,6 +68,21 @@ const JobDetails = () => {
       jobId: _id,
     };
     apply(data);
+  }
+
+  function handleQuestion(data) {
+    sendQuestion({
+      ...data,
+      userId: user?._id,
+      email: user?.email,
+      jobId: _id,
+    });
+    reset();
+  }
+
+  function handleReply(id) {
+    const data = { reply, userId: id };
+    replyQuestion(data);
   }
 
   return (
@@ -130,32 +154,45 @@ const JobDetails = () => {
                     </p>
                   ))}
 
-                  <div className="flex gap-3 my-5">
-                    <input placeholder="Reply" type="text" className="w-full" />
-                    <button
-                      className="shrink-0 h-14 w-14 bg-primary/10 border border-primary hover:bg-primary rounded-full transition-all  grid place-items-center text-primary hover:text-white"
-                      type="button"
-                    >
-                      <BsArrowRightShort size={30} />
-                    </button>
-                  </div>
+                  {user?.role === "employer" && (
+                    <div className="flex gap-3 my-5">
+                      <input
+                        placeholder="Reply"
+                        type="text"
+                        className="w-full"
+                        onBlur={(event) => setReply(event.target.value)}
+                      />
+                      <button
+                        className="shrink-0 h-14 w-14 bg-primary/10 border border-primary hover:bg-primary rounded-full transition-all  grid place-items-center text-primary hover:text-white"
+                        type="button"
+                        onClick={() => handleReply(id)}
+                      >
+                        <BsArrowRightShort size={30} />
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
 
-            <div className="flex gap-3 my-5">
-              <input
-                placeholder="Ask a question..."
-                type="text"
-                className="w-full"
-              />
-              <button
-                className="shrink-0 h-14 w-14 bg-primary/10 border border-primary hover:bg-primary rounded-full transition-all  grid place-items-center text-primary hover:text-white"
-                type="button"
-              >
-                <BsArrowRightShort size={30} />
-              </button>
-            </div>
+            {user?.role === "candidate" && (
+              <form onSubmit={handleSubmit(handleQuestion)}>
+                <div className="flex gap-3 my-5">
+                  <input
+                    placeholder="Ask a question..."
+                    type="text"
+                    className="w-full"
+                    {...register("question")}
+                  />
+                  <button
+                    className="shrink-0 h-14 w-14 bg-primary/10 border border-primary hover:bg-primary rounded-full transition-all  grid place-items-center text-primary hover:text-white"
+                    type="submit"
+                  >
+                    <BsArrowRightShort size={30} />
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       </div>
