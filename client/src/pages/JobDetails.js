@@ -39,6 +39,8 @@ const JobDetails = () => {
     responsibilities,
     overview,
     queries,
+    applicants,
+    status,
     _id,
   } = job || {};
 
@@ -136,6 +138,20 @@ const JobDetails = () => {
                   <BsArrowRightShort /> <span>{skill}</span>
                 </li>
               ))}
+            </ul>
+          </div>
+          <div>
+            <h1 className="text-primary text-lg font-medium mb-3">
+              Other Information
+            </h1>
+            <ul>
+              <li className="flex items-center">
+                <BsArrowRightShort />{" "}
+                <span>Applicants: {applicants?.length}</span>
+              </li>
+              <li className="flex items-center">
+                <BsArrowRightShort /> <span>Status: {status}</span>
+              </li>
             </ul>
           </div>
         </div>
