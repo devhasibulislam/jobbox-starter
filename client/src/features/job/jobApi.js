@@ -5,7 +5,7 @@ const authApi = apiSlice.injectEndpoints({
     // post new job
     postJob: builder.mutation({
       query: (data) => ({
-        url: "jobs",
+        url: "job",
         method: "POST",
         body: data,
       }),
@@ -27,7 +27,7 @@ const authApi = apiSlice.injectEndpoints({
       query: () => ({
         url: "jobs",
       }),
-      providesTags: ["Jobs"],
+      providesTags: ["Jobs", "Job"],
     }),
 
     // fetch all applied jobs
@@ -56,10 +56,40 @@ const authApi = apiSlice.injectEndpoints({
       invalidatesTags: ["Job"],
     }),
 
+    // employer query
+    employerQuery: builder.mutation({
+      query: (data) => ({
+        url: "employer-query",
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Job"],
+    }),
+
     // reply question
     reply: builder.mutation({
       query: (data) => ({
         url: "reply",
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Job"],
+    }),
+
+    // candidate reply
+    candidateReply: builder.mutation({
+      query: (data) => ({
+        url: "candidate-reply",
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Job"],
+    }),
+
+    // update job status
+    updateStatus: builder.mutation({
+      query: (data) => ({
+        url: `job-status/${data._id}`,
         method: "PATCH",
         body: data,
       }),
@@ -76,4 +106,7 @@ export const {
   useGetAppliedJobsQuery,
   useQuestionMutation,
   useReplyMutation,
+  useUpdateStatusMutation,
+  useEmployerQueryMutation,
+  useCandidateReplyMutation,
 } = authApi;
