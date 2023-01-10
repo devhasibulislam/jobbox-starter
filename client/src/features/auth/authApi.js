@@ -10,6 +10,7 @@ const authApi = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["User"],
       async onQueryStarted(data, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
@@ -20,8 +21,28 @@ const authApi = apiSlice.injectEndpoints({
       },
     }),
 
+    // fetch user by email
+    fetchUserByEmail: builder.query({
+      query: (email) => ({
+        method: "GET",
+        url: `user/${email}`,
+      }),
+      invalidatesTags: ["User"],
+    }),
+
     // fetch all user
+    fetchAllUser: builder.query({
+      query: () => ({
+        method: "GET",
+        url: "users",
+      }),
+      providesTags: ["User"],
+    }),
   }),
 });
 
-export const { useRegisterMutation } = authApi;
+export const {
+  useRegisterMutation,
+  useFetchUserByEmailQuery,
+  useFetchAllUserQuery,
+} = authApi;
