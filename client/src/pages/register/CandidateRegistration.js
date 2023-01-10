@@ -22,7 +22,7 @@ const CandidateRegistration = () => {
   }, []);
 
   const onSubmit = (data) => {
-    registerCandidate({ ...data, role: "candidate" });
+    registerCandidate({ ...data, role: "candidate", queries: [] });
   };
 
   return (
