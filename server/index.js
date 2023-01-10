@@ -44,6 +44,12 @@ const run = async () => {
       res.send({ status: false });
     });
 
+    app.get("/users", async (req, res) => {
+      const cursor = userCollection.find({});
+      const result = await cursor.toArray();
+      res.send({ status: true, data: result });
+    });
+
     app.patch("/apply", async (req, res) => {
       const userId = req.body.userId;
       const jobId = req.body.jobId;
@@ -90,6 +96,34 @@ const run = async () => {
       res.send({ status: false });
     });
 
+    app.patch("/employer-query", async (req, res) => {
+      const userId = req.body.userId;
+      const jobId = req.body.jobId;
+      const email = req.body.email;
+      const question = req.body.question;
+
+      const filter = { _id: ObjectId(userId) };
+      const updateDoc = {
+        $push: {
+          queries: {
+            jobId: ObjectId(jobId),
+            id: ObjectId(userId),
+            email,
+            question: question,
+            reply: [],
+          },
+        },
+      };
+
+      const result = await userCollection.updateOne(filter, updateDoc);
+
+      if (result?.acknowledged) {
+        return res.send({ status: true, data: result });
+      }
+
+      res.send({ status: false });
+    });
+
     app.patch("/reply", async (req, res) => {
       const userId = req.body.userId;
       const reply = req.body.reply;
@@ -108,6 +142,35 @@ const run = async () => {
       };
 
       const result = await jobCollection.updateOne(
+        filter,
+        updateDoc,
+        arrayFilter
+      );
+      if (result.acknowledged) {
+        return res.send({ status: true, data: result });
+      }
+
+      res.send({ status: false });
+    });
+
+    app.patch("/candidate-reply", async (req, res) => {
+      const userId = req.body.userId;
+      const reply = req.body.reply;
+      console.log(reply);
+      console.log(userId);
+
+      const filter = { "queries.id": ObjectId(userId) };
+
+      const updateDoc = {
+        $push: {
+          "queries.$[user].reply": reply,
+        },
+      };
+      const arrayFilter = {
+        arrayFilters: [{ "user.id": ObjectId(userId) }],
+      };
+
+      const result = await userCollection.updateOne(
         filter,
         updateDoc,
         arrayFilter
@@ -145,6 +208,16 @@ const run = async () => {
       const job = req.body;
 
       const result = await jobCollection.insertOne(job);
+
+      res.send({ status: true, data: result });
+    });
+
+    app.patch("/job-status/:id", async (req, res) => {
+      const result = await jobCollection.updateOne(
+        { _id: ObjectId(req.params.id) },
+        { $set: { status: req.body.status } },
+        { upsert: true }
+      );
 
       res.send({ status: true, data: result });
     });
