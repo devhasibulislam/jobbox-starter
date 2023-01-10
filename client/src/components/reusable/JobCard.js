@@ -1,8 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { RxCross2 } from "react-icons/rx";
+import { useUpdateStatusMutation } from "../../features/job/jobApi";
 
 const JobCard = ({ jobData }) => {
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const {
     _id,
@@ -16,6 +19,7 @@ const JobCard = ({ jobData }) => {
   const {
     user: { role },
   } = useSelector((state) => state.auth);
+  const [updateStatus] = useUpdateStatusMutation();
 
   return (
     <div
@@ -43,6 +47,15 @@ const JobCard = ({ jobData }) => {
         <button className="btn" onClick={() => navigate(`/job-details/${_id}`)}>
           Details
         </button>
+        {role === "employer" && pathname?.includes("job-list") && (
+          <button
+            className="btn"
+            title="Close this position"
+            onClick={() => updateStatus({ _id, status: "close" })}
+          >
+            <RxCross2 />
+          </button>
+        )}
       </div>
     </div>
   );
