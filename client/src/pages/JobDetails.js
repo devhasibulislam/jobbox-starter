@@ -98,8 +98,16 @@ const JobDetails = () => {
         <div className="space-y-5">
           <div className="flex justify-between items-center mt-5">
             <h1 className="text-xl font-semibold text-primary">{position}</h1>
-            <button onClick={handleApply} className="btn">
-              Apply
+            {status === "open" && (
+              <button onClick={handleApply} className="btn">
+                Apply
+              </button>
+            )}
+            <button
+              onClick={() => navigate(`/dashboard/candidate/${_id}`)}
+              className="btn"
+            >
+              My Chat
             </button>
           </div>
           <div>
