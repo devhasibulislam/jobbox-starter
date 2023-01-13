@@ -14,3 +14,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 export default auth;
+
+/**
+ * Firebase Auth/unauthorized domain. Domain is not authorized
+ * https://stackoverflow.com/questions/48076968/firebase-auth-unauthorized-domain-domain-is-not-authorized
+ */
